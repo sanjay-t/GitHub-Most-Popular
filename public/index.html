@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>React</title>
+    <script src="https://unpkg.com/react@15.3.1/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15.3.1/dist/react-dom.js"></script>
+    <script src="https://unpkg.com/babel-core@5.8.38/browser.min.js"></script>
+    <script src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="example"></div>
+    <script type="text/babel">
+
+    var RepoList = React.createClass({
+      getInitialState: function() {
+        return {
+          data: null,
+          loading: true,
+        };
+      },
+
+      componentWillReceiveProps: function(nextProps){
+        if(nextProps.sub){
+        var url = "";
+        url = "https://api.github.com/search/repositories?q="+nextProps.name+"&sort=stars";
+        $.getJSON(url, function (result) {
+          this.setState({
+            data: result,
+            loading: false
+          });
+        }.bind(this));
+      }
+      else{
+        var temp = 1;
+      }
+    },
+
+      render: function() {
+        if(this.state.loading){
+          return <span>Loading...</span>;
+        }
+        else{
+          var repos = this.state.data.items;
+          var repoList = repos.map(function (repo, index) {
+            return (
+              <li key={index}><a href={repo.html_url}>{repo.name}</a> ({repo.stargazers_count} stars) <br/> {repo.description}</li>
+            );
+          });
+          return (
+            <main>
+              <h1>Most Popular {this.props.name} Projects in Github</h1>
+              <ol>{repoList}</ol>
+            </main>
+          );
+        }
+      }
+    });
+
+    var Submission = React.createClass({
+      getInitialState : function(){
+        return {userInput : '', sendData : '', sub:false};
+      },
+      handleUserInput : function(e){
+        this.setState({userInput : e.target.value, sendData: '', sub:false});
+      },
+      handleSubmission: function(){
+        this.setState({userInput:this.state.userInput, sendData:this.state.userInput, sub:true});
+      },
+      render: function () {
+        return (
+          <div>
+            <input type="text" placeholder="Enter topic..."  onChange={this.handleUserInput} value={this.state.userInput}/>
+            <br/>
+            <button type="button" onClick={this.handleSubmission}>Submit</button>
+            <div>
+            <RepoList name={this.state.sendData} sub={this.state.sub}/>
+            </div>
+          </div>
+        );
+      }
+    });
+    ReactDOM.render(
+      <Submission />,
+      document.getElementById('example')
+    );
+
+    </script>
+  </body>
+</html>
