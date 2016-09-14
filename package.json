@@ -1,9 +1,6 @@
 {
-  "name": "react-tutorial",
+  "name": "react-example",
   "version": "0.0.0",
-  "private": true,
-  "license": "see LICENSE file",
-  "description": "Code from the React tutorial.",
   "main": "server.js",
   "dependencies": {
     "body-parser": "^1.4.3",
